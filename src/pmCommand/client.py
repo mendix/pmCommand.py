@@ -78,3 +78,16 @@ class ACSClient:
         logger.debug("Login successful, got sid: %s" % sid)
         self._sid = sid
         return True
+
+    def listipdus(self):
+        # action: get
+        #
+        # <paths><path>units.powermanagement.pdu_management</path></paths>
+        paths = et.Element("paths")
+        et.SubElement(paths, "path").text = "units.powermanagement.pdu_management"
+        response = self._request('get', paths)
+        if response is None:
+            return None
+        ipdus = [pdu_device.get("id") for pdu_device in
+                 response.findall("./payload/section[@id='pdu_devices_table']/array")]
+        return ipdus

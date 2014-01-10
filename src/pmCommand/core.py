@@ -16,3 +16,6 @@ class PMCommand():
 
     def login(self, username, password):
         return self.client.login(username, password)
+
+    def listipdus(self):
+        return self.client.listipdus()

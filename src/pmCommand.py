@@ -8,6 +8,7 @@
 
 import cmd
 import sys
+import pprint
 import pmCommand
 
 from pmCommand import logger
@@ -23,6 +24,10 @@ class CLI(cmd.Cmd):
     def do_login(self, args):
         (username, password) = args.split()
         self._pmCommand.login(username, password)
+
+    def do_listipdus(self, args):
+        pdus = self._pmCommand.listipdus()
+        pprint.pprint(pdus)
 
     def do_exit(self, args):
         return -1
