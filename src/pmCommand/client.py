@@ -50,7 +50,7 @@ class ACSClient:
                          response.text)
             return None
         logger.trace("<<< %s" % response.text)
-        return response.text
+        return et.fromstring(response.text)
 
     def login(self, username, password):
         # <payload>
@@ -74,8 +74,7 @@ class ACSClient:
         response = self._request('login', payload)
         if response is None:
             return False
-        root = et.fromstring(response)
-        sid = root.find("./sid").text
+        sid = response.find("./sid").text
         logger.debug("Login successful, got sid: %s" % sid)
         self._sid = sid
         return True
