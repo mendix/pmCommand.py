@@ -35,6 +35,11 @@ class CLI(cmd.Cmd):
         (fields, headers) = self._pmCommand.listipdus_table_info()
         self._print_table(fields, headers, pdus)
 
+    def do_status(self, args):
+        outlets = self._pmCommand.status()
+        (fields, headers) = self._pmCommand.status_table_info()
+        self._print_table(fields, headers, outlets)
+
     def _print_table(self, fields, headers, rows):
         maxlen = {}
         output = ['']

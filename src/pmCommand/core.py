@@ -4,7 +4,7 @@
 #
 
 from client import ACSClient
-from structures import PDU
+from structures import PDU, Outlet
 
 
 class PMCommand():
@@ -23,3 +23,9 @@ class PMCommand():
 
     def listipdus_table_info(self):
         return (PDU.fields, PDU.headers)
+
+    def status(self):
+        return self.client.outlets(self.client.listipdus().keys())
+
+    def status_table_info(self):
+        return (Outlet.fields, Outlet.headers)
