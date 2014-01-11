@@ -3,6 +3,9 @@ from log import logger
 
 class PDU(object):
 
+    fields = ('name', 'vendor', 'model', 'position', 'status',
+              'outlets', 'current', 'power', 'alarm')
+
     headers = {}
 
     def __init__(self, et_pdu):

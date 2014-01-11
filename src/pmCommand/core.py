@@ -4,6 +4,7 @@
 #
 
 from client import ACSClient
+from structures import PDU
 
 
 class PMCommand():
@@ -19,3 +20,6 @@ class PMCommand():
 
     def listipdus(self):
         return self.client.listipdus()
+
+    def listipdus_table_info(self):
+        return (PDU.fields, PDU.headers)

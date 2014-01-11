@@ -8,7 +8,6 @@
 
 import cmd
 import sys
-import pprint
 import pmCommand
 
 from pmCommand import logger
@@ -20,15 +19,47 @@ class CLI(cmd.Cmd):
         logger.debug('Using pmCommand version %s' % pmCommand.__version__)
         cmd.Cmd.__init__(self)
         self._pmCommand = pmCommand.PMCommand()
+        self._sort = True
 
     def do_login(self, args):
         (username, password) = args.split()
         self._pmCommand.login(username, password)
 
+    def do_sort(self, args):
+        self._sort = not self._sort
+        logger.info("Sorted output is now %s." %
+                    ("on" if self._sort else "off",))
+
     def do_listipdus(self, args):
         pdus = self._pmCommand.listipdus()
-        for pdu in pdus.itervalues():
-            pprint.pprint([pdu.headers, pdu.text, pdu.label])
+        (fields, headers) = self._pmCommand.listipdus_table_info()
+        self._print_table(fields, headers, pdus)
+
+    def _print_table(self, fields, headers, rows):
+        maxlen = {}
+        output = ['']
+
+        row_keys = rows.keys()
+        if self._sort:
+            row_keys = sorted(row_keys)
+
+        for field in fields:
+            maxlen[field] = max(len(headers[field]),
+                                max([len(row.label[field]) for row in rows.itervalues()]))
+            output.append(headers[field].ljust(maxlen[field]))
+        print '  '.join(output)
+
+        output = ['']
+        for field in fields:
+            output.append('=' * maxlen[field])
+        print '  '.join(output)
+
+        for row_key in row_keys:
+            row = rows[row_key]
+            output = ['']
+            for field in fields:
+                output.append(row.label[field].ljust(maxlen[field]))
+            print '  '.join(output)
 
     def do_exit(self, args):
         return -1
