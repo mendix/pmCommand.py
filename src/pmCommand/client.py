@@ -7,7 +7,9 @@
 
 import xml.etree.ElementTree as et
 import requests
+from collections import OrderedDict
 from log import logger
+import structures
 
 
 class ACSClient:
@@ -53,12 +55,6 @@ class ACSClient:
         return et.fromstring(response.text)
 
     def login(self, username, password):
-        # <payload>
-        #   <section structure="login">
-        #     <parameter id="username" structure="RWtext"><value>admin</value></parameter>
-        #     <parameter id="password" structure="password"><value>1</value></parameter
-        #   </section>
-        # </payload>
         payload = et.Element("payload")
         payload_section = et.SubElement(payload, "section")
         payload_section.set("structure", "login")
@@ -74,20 +70,22 @@ class ACSClient:
         response = self._request('login', payload)
         if response is None:
             return False
+
         sid = response.find("./sid").text
         logger.debug("Login successful, got sid: %s" % sid)
         self._sid = sid
         return True
 
     def listipdus(self):
-        # action: get
-        #
-        # <paths><path>units.powermanagement.pdu_management</path></paths>
         paths = et.Element("paths")
         et.SubElement(paths, "path").text = "units.powermanagement.pdu_management"
+
         response = self._request('get', paths)
         if response is None:
             return None
-        ipdus = [pdu_device.get("id") for pdu_device in
-                 response.findall("./payload/section[@id='pdu_devices_table']/array")]
+
+        ipdus = OrderedDict()
+        for et_ipdu in response.findall("./payload/section[@id='pdu_devices_table']/array"):
+            ipdus[et_ipdu.get("id")] = structures.PDU(et_ipdu)
+
         return ipdus
