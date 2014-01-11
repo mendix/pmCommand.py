@@ -27,8 +27,8 @@ class CLI(cmd.Cmd):
 
     def do_listipdus(self, args):
         pdus = self._pmCommand.listipdus()
-        for pdu in pdus.iteritems():
-            pprint.pprint(pdu)
+        for pdu in pdus.itervalues():
+            pprint.pprint([pdu.headers, pdu.text, pdu.label])
 
     def do_exit(self, args):
         return -1
