@@ -41,13 +41,12 @@ class CLI(cmd.Cmd):
         self._print_table(fields, headers, outlets)
 
     def _print_table(self, fields, headers, rows):
-        maxlen = {}
-        output = ['']
-
         row_keys = rows.keys()
         if self._sort:
             row_keys = sorted(row_keys)
 
+        output = ['']
+        maxlen = {}
         for field in fields:
             maxlen[field] = max(len(headers[field]),
                                 max([len(row.label[field]) for row in rows.itervalues()]))
