@@ -25,7 +25,12 @@ class PMCommand():
         return (PDU.fields, PDU.headers)
 
     def status(self):
-        return self.client.outlets(self.client.listipdus().keys())
+        pdus = self.client.listipdus()
+        outlets = []
+        for pdu in pdus:
+            pdu_id = pdu.text['name']
+            outlets.extend(self.client.outlets(pdu_id))
+        return outlets
 
     def status_table_info(self):
         return (Outlet.fields, Outlet.headers)

@@ -7,7 +7,6 @@
 
 import xml.etree.ElementTree as et
 import requests
-from collections import OrderedDict
 from log import logger
 import structures
 
@@ -86,25 +85,12 @@ class ACSClient:
     def listipdus(self):
         et_response = self._get("units.powermanagement.pdu_management")
         et_ipdus = et_response.findall("./payload/section[@id='pdu_devices_table']/array")
+        return [structures.PDU(et_ipdu) for et_ipdu in et_ipdus]
 
-        ipdus = OrderedDict()
-        for et_ipdu in et_ipdus:
-            ipdus[et_ipdu.get("id")] = structures.PDU(et_ipdu)
-
-        return ipdus
-
-    def outlets(self, pdu_ids):
-        outlets = OrderedDict()
-
-        for pdu_id in pdu_ids:
-            et_response = self._get(
-                path="units.powermanagement.pdu_management.pduDevicesDetails.outletTable",
-                pathvar=pdu_id
-            )
-            et_outlets = et_response.findall("./payload/section[@id='outlet_details']/array")
-
-            for et_outlet in et_outlets:
-                outlet = structures.Outlet(et_outlet, pdu_id)
-                outlets[outlet.text['outlet']] = outlet
-
-        return outlets
+    def outlets(self, pdu_id):
+        et_response = self._get(
+            path="units.powermanagement.pdu_management.pduDevicesDetails.outletTable",
+            pathvar=pdu_id
+        )
+        et_outlets = et_response.findall("./payload/section[@id='outlet_details']/array")
+        return [structures.Outlet(et_outlet, pdu_id) for et_outlet in et_outlets]

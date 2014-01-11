@@ -22,6 +22,9 @@ class PDU(object):
         ]
         (self.text, self.label) = load_array(et_pdu, PDU.headers, mapping)
 
+    def __lt__(self, other):
+        return self.text['name'] < other.text['name']
+
 
 class Outlet(object):
 
@@ -42,6 +45,14 @@ class Outlet(object):
         Outlet.headers['outlet'] = "Outlet"
         self.text['outlet'] = "%s[%s]" % (pdu_id, self.text['number'])
         self.label['outlet'] = self.text['outlet']
+
+        self.pdu_id = pdu_id
+
+    def __lt__(self, other):
+        result = ((self.pdu_id, int(self.text['number'])) <
+                  (other.pdu_id, int(other.text['number'])))
+        logger.trace("%s < %s is %s" % (self.text['outlet'], other.text['outlet'], result))
+        return result
 
 
 def load_array(et_array, headers, mapping):

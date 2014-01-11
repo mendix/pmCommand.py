@@ -41,15 +41,14 @@ class CLI(cmd.Cmd):
         self._print_table(fields, headers, outlets)
 
     def _print_table(self, fields, headers, rows):
-        row_keys = rows.keys()
         if self._sort:
-            row_keys = sorted(row_keys)
+            rows = sorted(rows)
 
         output = ['']
         maxlen = {}
         for field in fields:
             maxlen[field] = max(len(headers[field]),
-                                max([len(row.label[field]) for row in rows.itervalues()]))
+                                max([len(row.label[field]) for row in rows]))
             output.append(headers[field].ljust(maxlen[field]))
         print '  '.join(output)
 
@@ -58,8 +57,7 @@ class CLI(cmd.Cmd):
             output.append('=' * maxlen[field])
         print '  '.join(output)
 
-        for row_key in row_keys:
-            row = rows[row_key]
+        for row in rows:
             output = ['']
             for field in fields:
                 output.append(row.label[field].ljust(maxlen[field]))
