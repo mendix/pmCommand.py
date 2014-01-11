@@ -54,6 +54,11 @@ class ACSClient:
         logger.trace("<<< %s" % response.text)
         return et.fromstring(response.text)
 
+    def _get(self, path):
+        et_paths = et.Element("paths")
+        et.SubElement(et_paths, "path").text = path
+        return self._request('get', et_paths)
+
     def login(self, username, password):
         payload = et.Element("payload")
         payload_section = et.SubElement(payload, "section")
@@ -77,15 +82,11 @@ class ACSClient:
         return True
 
     def listipdus(self):
-        paths = et.Element("paths")
-        et.SubElement(paths, "path").text = "units.powermanagement.pdu_management"
-
-        response = self._request('get', paths)
-        if response is None:
-            return None
+        et_response = self._get("units.powermanagement.pdu_management")
+        et_ipdus = et_response.findall("./payload/section[@id='pdu_devices_table']/array")
 
         ipdus = OrderedDict()
-        for et_ipdu in response.findall("./payload/section[@id='pdu_devices_table']/array"):
+        for et_ipdu in et_ipdus:
             ipdus[et_ipdu.get("id")] = structures.PDU(et_ipdu)
 
         return ipdus
