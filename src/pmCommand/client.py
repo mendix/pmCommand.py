@@ -64,6 +64,12 @@ class ACSClient:
         et_error = et_response.find("./error")
         if et_error is not None:
             logger.error(et_error.get("label"))
+
+        if ((et_response.find("./action").text == "login"
+             and action != "login" and action != "logout")):
+            self._sid = None
+            raise RuntimeError("Invalid session, please login first.")
+
         return et_response
 
     def login(self, username, password):
