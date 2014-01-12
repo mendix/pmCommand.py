@@ -11,3 +11,7 @@ def parse_outlet(pdu_outlet):
         return (None, None)
     groupdict = match.groupdict()
     return (groupdict['pdu_id'], groupdict['outlet_id'])
+
+
+def remove_outlet_crap(outlet_name):
+    return '_'.join(outlet_name.split('_')[:-1])

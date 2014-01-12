@@ -9,6 +9,7 @@ import xml.etree.ElementTree as et
 import requests
 from log import logger
 import structures
+import util
 
 
 class ACSClient:
@@ -120,7 +121,8 @@ class ACSClient:
         if et_outlet is None:
             logger.error("Outlet %s[%s] not found." % (pdu_id, outlet_id))
         else:
-            outlet_name = et_outlet.find("./parameter[@id='outlet_name']/value").text
+            outlet_name = util.remove_outlet_crap(
+                et_outlet.find("./parameter[@id='outlet_name']/value").text)
             outlet_status = et_outlet.find("./parameter[@id='status']/value").text
             logger.info("%s[%s]: status of outlet %s is now: %s" %
                         (pdu_id, outlet_id, outlet_name, outlet_status))
