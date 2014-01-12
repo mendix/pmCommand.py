@@ -41,11 +41,20 @@ class CLI(cmd.Cmd):
         self._print_table(fields, headers, outlets)
 
     def outlet_action(self, action, args):
-        pdu_outlets = [x.strip() for x in args.split(',')]
-        for pdu_outlet in pdu_outlets:
-            (pdu_id, outlet_id) = pmCommand.util.parse_outlet(pdu_outlet)
-            if pdu_id is not None and outlet_id is not None:
-                self._pmCommand.outlet_action(action, pdu_id, outlet_id)
+        for (pdu_id, outlet_id) in self.parse_outlet_args(args):
+            self._pmCommand.outlet_action(action, pdu_id, outlet_id)
+
+    def parse_outlet_args(self, args):
+        pdu_outlet_tuples = []
+        if args != '':
+            pdu_outlets = [x.strip() for x in args.split(',')]
+            for pdu_outlet in pdu_outlets:
+                (pdu_id, outlet_id) = pmCommand.util.parse_outlet(pdu_outlet)
+                if pdu_id is not None and outlet_id is not None:
+                    pdu_outlet_tuples.append((pdu_id, outlet_id))
+        else:
+            logger.error("No outlet specified.")
+        return pdu_outlet_tuples
 
     def do_on(self, args):
         self.outlet_action("on", args)
