@@ -36,4 +36,7 @@ class PMCommand():
         return (Outlet.fields, Outlet.headers)
 
     def on(self, pdu_id, outlet_id):
-        return self.client.on(pdu_id, outlet_id)
+        return self.outlet_action("on", pdu_id, outlet_id)
+
+    def outlet_action(self, action, pdu_id, outlet_id):
+        return self.client.outlet_action(action, pdu_id, outlet_id)

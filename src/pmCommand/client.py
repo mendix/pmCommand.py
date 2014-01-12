@@ -102,7 +102,7 @@ class ACSClient:
         et_outlets = et_response.findall("./payload/section[@id='outlet_details']/array")
         return [structures.Outlet(et_outlet, pdu_id) for et_outlet in et_outlets]
 
-    def on(self, pdu_id, outlet_id):
+    def outlet_action(self, action, pdu_id, outlet_id):
         et_section = et.Element("section")
         et_section.set("structure", "table")
         et_section.set("id", "outlet_details")
@@ -110,7 +110,7 @@ class ACSClient:
         et_array.set("id", outlet_id)
 
         et_response = self._request(
-            action="on",
+            action=action,
             path="units.powermanagement.pdu_management"
                  ".pduDevicesDetails.outletTable.Nazca_outlet_table",
             pathvar=pdu_id,
