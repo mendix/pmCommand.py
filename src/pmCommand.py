@@ -13,13 +13,21 @@ import pmCommand
 from pmCommand import logger
 
 
-class CLI(cmd.Cmd):
+class CLI(cmd.Cmd, object):
 
     def __init__(self, yaml_files=None):
         logger.debug('Using pmCommand version %s' % pmCommand.__version__)
         cmd.Cmd.__init__(self)
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
+
+    def onecmd(self, line):
+        try:
+            return super(CLI, self).onecmd(line)
+        except RuntimeError as re:
+            logger.error(re.message)
+        except KeyboardInterrupt:
+            print
 
     def do_login(self, args):
         (username, password) = args.split()
