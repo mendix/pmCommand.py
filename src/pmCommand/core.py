@@ -34,3 +34,6 @@ class PMCommand():
 
     def status_table_info(self):
         return (Outlet.fields, Outlet.headers)
+
+    def on(self, pdu_id, outlet_id):
+        return self.client.on(pdu_id, outlet_id)

@@ -96,3 +96,24 @@ class ACSClient:
         )
         et_outlets = et_response.findall("./payload/section[@id='outlet_details']/array")
         return [structures.Outlet(et_outlet, pdu_id) for et_outlet in et_outlets]
+
+    def on(self, pdu_id, outlet_id):
+        et_section = et.Element("section")
+        et_section.set("structure", "table")
+        et_section.set("id", "outlet_details")
+        et_array = et.SubElement(et_section, "array")
+        et_array.set("id", outlet_id)
+
+        et_response = self._request(
+            action="on",
+            path="units.powermanagement.pdu_management"
+                 ".pduDevicesDetails.outletTable.Nazca_outlet_table",
+            pathvar=pdu_id,
+            payload=et_section
+        )
+        et_outlet = et_response.find("./payload/section[@id='outlet_details']"
+                                     "/array[@id='%s']" % outlet_id)
+        outlet_name = et_outlet.find("./parameter[@id='outlet_name']/value").text
+        outlet_status = et_outlet.find("./parameter[@id='status']/value").text
+        logger.info("%s[%s]: status of outlet %s is now: %s" %
+                    (pdu_id, outlet_id, outlet_name, outlet_status))

@@ -40,6 +40,10 @@ class CLI(cmd.Cmd):
         (fields, headers) = self._pmCommand.status_table_info()
         self._print_table(fields, headers, outlets)
 
+    def do_on(self, args):
+        (pdu_id, outlet_id) = args.split()
+        self._pmCommand.on(pdu_id, outlet_id)
+
     def _print_table(self, fields, headers, rows):
         if self._sort:
             rows = sorted(rows)
