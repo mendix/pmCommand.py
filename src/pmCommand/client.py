@@ -20,7 +20,7 @@ class ACSClient:
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         }
 
-    def _wrap(self, action, subelements):
+    def _wrap(self, action, path=None, pathvar=None, payload=None):
         # <avtrans>
         avtrans = et.Element("avtrans")
         # <sid>sid_if_logged_in</sid>
@@ -34,13 +34,21 @@ class ACSClient:
         agents = et.SubElement(avtrans, "agents")
         et.SubElement(agents, "src").text = "wmi"
         et.SubElement(agents, "dest").text = "controller"
+        if path is not None:
+            # <paths><path>foo.bar</path><pathvar>baz</pathvar></paths>
+            et_paths = et.SubElement(avtrans, "paths")
+            et.SubElement(et_paths, "path").text = path
+            if pathvar is not None:
+                et.SubElement(et_paths, "pathvar").text = pathvar
         # wrap actual request
-        avtrans.extend(subelements)
+        if payload is not None:
+            et_payload = et.SubElement(avtrans, "payload")
+            et_payload.append(payload)
         # </avtrans>
         return avtrans
 
-    def _request(self, action, subelements):
-        avtrans = self._wrap(action, [subelements])
+    def _request(self, action, path=None, pathvar=None, payload=None):
+        avtrans = self._wrap(action, path, pathvar, payload)
         xml = et.tostring(avtrans)
         logger.trace(">>> %s" % xml)
         response = requests.post(self._url, data=xml, headers=self._headers, verify=False)
@@ -53,27 +61,19 @@ class ACSClient:
         logger.trace("<<< %s" % response.text)
         return et.fromstring(response.text)
 
-    def _get(self, path, pathvar=None):
-        et_paths = et.Element("paths")
-        et.SubElement(et_paths, "path").text = path
-        if pathvar is not None:
-            et.SubElement(et_paths, "pathvar").text = pathvar
-        return self._request('get', et_paths)
-
     def login(self, username, password):
-        payload = et.Element("payload")
-        payload_section = et.SubElement(payload, "section")
-        payload_section.set("structure", "login")
-        parameter_username = et.SubElement(payload_section, "parameter")
+        et_section = et.Element("section")
+        et_section.set("structure", "login")
+        parameter_username = et.SubElement(et_section, "parameter")
         parameter_username.set("id", "username")
         parameter_username.set("structure", "RWtext")
         et.SubElement(parameter_username, "value").text = username
-        parameter_password = et.SubElement(payload_section, "parameter")
+        parameter_password = et.SubElement(et_section, "parameter")
         parameter_password.set("id", "password")
         parameter_password.set("structure", "password")
         et.SubElement(parameter_password, "value").text = password
 
-        response = self._request('login', payload)
+        response = self._request('login', payload=et_section)
         if response is None:
             return False
 
@@ -83,12 +83,14 @@ class ACSClient:
         return True
 
     def listipdus(self):
-        et_response = self._get("units.powermanagement.pdu_management")
+        et_response = self._request(action="get",
+                                    path="units.powermanagement.pdu_management")
         et_ipdus = et_response.findall("./payload/section[@id='pdu_devices_table']/array")
         return [structures.PDU(et_ipdu) for et_ipdu in et_ipdus]
 
     def outlets(self, pdu_id):
-        et_response = self._get(
+        et_response = self._request(
+            action="get",
             path="units.powermanagement.pdu_management.pduDevicesDetails.outletTable",
             pathvar=pdu_id
         )
