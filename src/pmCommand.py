@@ -41,8 +41,11 @@ class CLI(cmd.Cmd):
         self._print_table(fields, headers, outlets)
 
     def do_on(self, args):
-        (pdu_id, outlet_id) = args.split()
-        self._pmCommand.on(pdu_id, outlet_id)
+        pdu_outlets = [x.strip() for x in args.split(',')]
+        for pdu_outlet in pdu_outlets:
+            (pdu_id, outlet_id) = pmCommand.util.parse_outlet(pdu_outlet)
+            if pdu_id is not None and outlet_id is not None:
+                self._pmCommand.on(pdu_id, outlet_id)
 
     def _print_table(self, fields, headers, rows):
         if self._sort:
