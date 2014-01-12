@@ -89,6 +89,8 @@ class ACSClient:
             return False
 
         sid = response.find("./sid").text
+        if sid is None:
+            return False
         logger.debug("Login successful, got sid: %s" % sid)
         self._sid = sid
         return True
