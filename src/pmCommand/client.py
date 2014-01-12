@@ -59,7 +59,11 @@ class ACSClient:
                          response.text)
             return None
         logger.trace("<<< %s" % response.text)
-        return et.fromstring(response.text)
+        et_response = et.fromstring(response.text)
+        et_error = et_response.find("./error")
+        if et_error is not None:
+            logger.error(et_error.get("label"))
+        return et_response
 
     def login(self, username, password):
         et_section = et.Element("section")
@@ -113,7 +117,10 @@ class ACSClient:
         )
         et_outlet = et_response.find("./payload/section[@id='outlet_details']"
                                      "/array[@id='%s']" % outlet_id)
-        outlet_name = et_outlet.find("./parameter[@id='outlet_name']/value").text
-        outlet_status = et_outlet.find("./parameter[@id='status']/value").text
-        logger.info("%s[%s]: status of outlet %s is now: %s" %
-                    (pdu_id, outlet_id, outlet_name, outlet_status))
+        if et_outlet is None:
+            logger.error("Outlet %s[%s] not found." % (pdu_id, outlet_id))
+        else:
+            outlet_name = et_outlet.find("./parameter[@id='outlet_name']/value").text
+            outlet_status = et_outlet.find("./parameter[@id='status']/value").text
+            logger.info("%s[%s]: status of outlet %s is now: %s" %
+                        (pdu_id, outlet_id, outlet_name, outlet_status))
