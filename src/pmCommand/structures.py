@@ -52,10 +52,8 @@ class Outlet(object):
         self.pdu_id = pdu_id
 
     def __lt__(self, other):
-        result = ((self.pdu_id, int(self.text['number'])) <
-                  (other.pdu_id, int(other.text['number'])))
-        logger.trace("%s < %s is %s" % (self.text['outlet'], other.text['outlet'], result))
-        return result
+        return ((self.pdu_id, int(self.text['number'])) <
+                (other.pdu_id, int(other.text['number'])))
 
 
 def load_array(et_array, headers, mapping):
