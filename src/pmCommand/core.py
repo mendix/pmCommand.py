@@ -38,5 +38,17 @@ class PMCommand():
     def on(self, pdu_id, outlet_id):
         return self.outlet_action("on", pdu_id, outlet_id)
 
+    def off(self, pdu_id, outlet_id):
+        return self.outlet_action("off", pdu_id, outlet_id)
+
+    def lock(self, pdu_id, outlet_id):
+        return self.outlet_action("lock", pdu_id, outlet_id)
+
+    def unlock(self, pdu_id, outlet_id):
+        return self.outlet_action("unlock", pdu_id, outlet_id)
+
+    def cycle(self, pdu_id, outlet_id):
+        return self.outlet_action("cycle", pdu_id, outlet_id)
+
     def outlet_action(self, action, pdu_id, outlet_id):
         return self.client.outlet_action(action, pdu_id, outlet_id)

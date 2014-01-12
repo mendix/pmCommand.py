@@ -45,10 +45,22 @@ class CLI(cmd.Cmd):
         for pdu_outlet in pdu_outlets:
             (pdu_id, outlet_id) = pmCommand.util.parse_outlet(pdu_outlet)
             if pdu_id is not None and outlet_id is not None:
-                self._pmCommand.on(pdu_id, outlet_id)
+                self._pmCommand.outlet_action(action, pdu_id, outlet_id)
 
     def do_on(self, args):
         self.outlet_action("on", args)
+
+    def do_off(self, args):
+        self.outlet_action("off", args)
+
+    def do_lock(self, args):
+        self.outlet_action("lock", args)
+
+    def do_unlock(self, args):
+        self.outlet_action("unlock", args)
+
+    def do_cycle(self, args):
+        self.outlet_action("cycle", args)
 
     def _print_table(self, fields, headers, rows):
         if self._sort:
