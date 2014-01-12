@@ -14,9 +14,9 @@ import util
 
 class ACSClient:
 
-    def __init__(self, url):
+    def __init__(self):
         self._sid = None
-        self._url = url
+        self._url = None
         self._headers = {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         }
@@ -49,6 +49,9 @@ class ACSClient:
         return avtrans
 
     def _request(self, action, path=None, pathvar=None, payload=None):
+        if self._url is None:
+            raise RuntimeError("Please login first.")
+
         avtrans = self._wrap(action, path, pathvar, payload)
         xml = et.tostring(avtrans)
         logger.trace(">>> %s" % xml)
@@ -72,7 +75,10 @@ class ACSClient:
 
         return et_response
 
-    def login(self, username, password):
+    def login(self, host, username, password):
+        self._url = "https://%s/appliance/avtrans" % host
+        logger.debug("Logging into url %s as %s" % (self._url, username))
+
         et_section = et.Element("section")
         et_section.set("structure", "login")
         parameter_username = et.SubElement(et_section, "parameter")

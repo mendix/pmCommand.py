@@ -9,15 +9,17 @@
 import cmd
 import sys
 import pmCommand
+import getpass
 
 from pmCommand import logger
 
 
 class CLI(cmd.Cmd, object):
 
-    def __init__(self, yaml_files=None):
+    def __init__(self, user_at_host):
         logger.debug('Using pmCommand version %s' % pmCommand.__version__)
         cmd.Cmd.__init__(self)
+        (self._username, self._host) = user_at_host.split('@')
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
 
@@ -30,10 +32,13 @@ class CLI(cmd.Cmd, object):
             print
 
     def do_login(self, args):
-        (username, password) = args.split()
-        self._pmCommand.login(username, password)
-        logger.debug("Session idle timeout: %s" %
-                     self._pmCommand.get_session_idle_timeout())
+        password = getpass.getpass("Password: ")
+        success = self._pmCommand.login(self._host,
+                                        self._username,
+                                        password)
+        if success:
+            logger.debug("Session idle timeout: %s" %
+                         self._pmCommand.get_session_idle_timeout())
 
     def do_logout(self, args):
         self._pmCommand.logout()
@@ -135,12 +140,6 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option(
-        "-c",
-        action="append",
-        type="string",
-        dest="yaml_files"
-    )
-    parser.add_option(
         "-v",
         "--verbose",
         action="count",
@@ -170,12 +169,12 @@ if __name__ == '__main__':
         verbosity = 5
     logger.setLevel(verbosity)
 
-    cli = CLI(yaml_files=options.yaml_files)
-    if args:
-        cli.onecmd(' '.join(args))
-    else:
-        try:
-            cli.cmdloop()
-        except KeyboardInterrupt:
-            print("^C")
-            sys.exit(130)  # 128 + SIGINT
+    if len(args) == 0:
+        sys.stderr.write("Need user@host positional argument.\n")
+        sys.exit(1)
+    cli = CLI(args[0])
+    try:
+        cli.cmdloop()
+    except KeyboardInterrupt:
+        print("^C")
+        sys.exit(130)  # 128 + SIGINT

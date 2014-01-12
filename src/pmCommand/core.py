@@ -13,10 +13,10 @@ class PMCommand():
         self.reload_config()
 
     def reload_config(self):
-        self.client = ACSClient("https://10.140.11.30/appliance/avtrans")
+        self.client = ACSClient()
 
-    def login(self, username, password):
-        return self.client.login(username, password)
+    def login(self, host, username, password):
+        return self.client.login(host, username, password)
 
     def logout(self):
         return self.client.logout()
