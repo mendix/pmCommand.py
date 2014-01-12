@@ -35,6 +35,9 @@ class CLI(cmd.Cmd, object):
         logger.debug("Session idle timeout: %s" %
                      self._pmCommand.get_session_idle_timeout())
 
+    def do_logout(self, args):
+        self._pmCommand.logout()
+
     def do_sort(self, args):
         self._sort = not self._sort
         logger.info("Sorted output is now %s." %

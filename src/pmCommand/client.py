@@ -93,6 +93,15 @@ class ACSClient:
         self._sid = sid
         return True
 
+    def logout(self):
+        et_response = self._request(action="logout")
+        if (et_response.find("./action").text == "login"):
+            logger.info("Logout successful.")
+            self._sid = None
+            return True
+        # haven't seen any way yet to end up here
+        return False
+
     def listipdus(self):
         et_response = self._request(action="get",
                                     path="units.powermanagement.pdu_management")
