@@ -126,3 +126,12 @@ class ACSClient:
             outlet_status = et_outlet.find("./parameter[@id='status']/value").text
             logger.info("%s[%s]: status of outlet %s is now: %s" %
                         (pdu_id, outlet_id, outlet_name, outlet_status))
+
+    def get_session_idle_timeout(self):
+        et_response = self._request(
+            action="get",
+            path="units.applianceSettings.security.SecurityProfileNav"
+        )
+        return int(et_response.find("./payload/section[@id='securityProfile']"
+                                    "/parameter[@id='sessionTimeout']"
+                                    "/parameter[@id='idletimeout']/value").text)

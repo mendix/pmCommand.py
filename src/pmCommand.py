@@ -24,6 +24,8 @@ class CLI(cmd.Cmd):
     def do_login(self, args):
         (username, password) = args.split()
         self._pmCommand.login(username, password)
+        logger.debug("Session idle timeout: %s" %
+                     self._pmCommand.get_session_idle_timeout())
 
     def do_sort(self, args):
         self._sort = not self._sort

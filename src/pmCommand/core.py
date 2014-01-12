@@ -52,3 +52,6 @@ class PMCommand():
 
     def outlet_action(self, action, pdu_id, outlet_id):
         return self.client.outlet_action(action, pdu_id, outlet_id)
+
+    def get_session_idle_timeout(self):
+        return self.client.get_session_idle_timeout()
