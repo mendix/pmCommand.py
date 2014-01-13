@@ -96,24 +96,28 @@ class CLI(cmd.Cmd, object):
         if self._sort:
             rows = sorted(rows)
 
+        print
+
         output = ['']
         maxlen = {}
         for field in fields:
             maxlen[field] = max(len(headers[field]),
                                 max([len(row.label[field]) for row in rows]))
             output.append(headers[field].ljust(maxlen[field]))
-        print '  '.join(output)
+        print('  '.join(output))
 
         output = ['']
         for field in fields:
             output.append('=' * maxlen[field])
-        print '  '.join(output)
+        print('  '.join(output))
 
         for row in rows:
             output = ['']
             for field in fields:
                 output.append(row.label[field].ljust(maxlen[field]))
-            print '  '.join(output)
+            print('  '.join(output))
+
+        print
 
     def do_exit(self, args):
         return -1
