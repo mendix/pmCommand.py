@@ -32,13 +32,15 @@ class CLI(cmd.Cmd, object):
             print
 
     def do_login(self, args):
-        password = getpass.getpass("Password: ")
+        password = getpass.getpass("Enter password for %s@%s: " %
+                                   (self._username, self._host))
         success = self._pmCommand.login(self._host,
                                         self._username,
                                         password)
         if success:
             logger.debug("Session idle timeout: %s" %
                          self._pmCommand.get_session_idle_timeout())
+            self.prompt = "pmCommand(%s): " % self._host
 
     def do_logout(self, args):
         self._pmCommand.logout()
