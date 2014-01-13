@@ -181,6 +181,7 @@ if __name__ == '__main__':
         sys.exit(1)
     cli = CLI(args[0])
     try:
+        cli.onecmd("login")
         cli.cmdloop()
     except KeyboardInterrupt:
         print("^C")
