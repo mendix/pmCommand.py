@@ -146,7 +146,19 @@ class CLI(cmd.Cmd, object):
         print("""pmCommand strikes back!
 
 Available commands:
- login <url> <username> <password>
+ login              Provide password to get a new session at the appliance.
+ logout             Logout from the appliance.
+ sort               Toggle sorted output for pdu and outlet list
+ exit               Exits from the application.
+ help               Displays the list of commands.
+ listipdus          Lists the IPDUs connected to the appliance.
+ on                 Turns on outlets defined in <outlet list>.
+ off                Turns off outlets defined in <outlet list>.
+ cycle              Power cycles outlets defined in <outlet list>.
+ lock               Locks outlets defined in <outlet list> in current state.
+ unlock             Unlocks outlets define in <outlet list>.
+ status             Displays status of outlets defined in <outlet list>.
+ save               Saves configuration to flash.
 """)
 
         print("Hint: use tab autocompletion for commands!")
