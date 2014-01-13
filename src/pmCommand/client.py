@@ -150,6 +150,19 @@ class ACSClient:
             logger.info("%s[%s]: status of outlet %s is now: %s" %
                         (pdu_id, outlet_id, outlet_name, outlet_status))
 
+    def save(self, pdu_id):
+        et_section = et.Element("section")
+        et_section.set("structure", "table")
+        et_section.set("id", "outlet_details")
+
+        self._request(
+            action="savepdu",
+            path="units.powermanagement.pdu_management.pduDevicesDetails"
+                 ".outletTable.Nazca_outlet_table",
+            pathvar=pdu_id,
+            payload=et_section
+        )
+
     def get_session_idle_timeout(self):
         et_response = self._request(
             action="get",

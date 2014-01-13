@@ -5,6 +5,7 @@
 
 from client import ACSClient
 from structures import PDU, Outlet
+from log import logger
 
 
 class PMCommand():
@@ -67,6 +68,11 @@ class PMCommand():
 
     def outlet_action(self, action, pdu_id, outlet_id):
         return self.client.outlet_action(action, pdu_id, outlet_id)
+
+    def save(self):
+        for pdu in self.client.listipdus():
+            logger.info("Saving configuration on PDU %s." % pdu.text['name'])
+            self.client.save(pdu.text['name'])
 
     def get_session_idle_timeout(self):
         return self.client.get_session_idle_timeout()

@@ -92,6 +92,9 @@ class CLI(cmd.Cmd, object):
     def do_cycle(self, args):
         self.outlet_action("cycle", args)
 
+    def do_save(self, args):
+        self._pmCommand.save()
+
     def _print_table(self, fields, headers, rows):
         if self._sort:
             rows = sorted(rows)
