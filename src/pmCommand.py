@@ -123,12 +123,15 @@ class CLI(cmd.Cmd, object):
         print
 
     def do_exit(self, args):
+        self.do_logout(None)
         return -1
 
     def do_quit(self, args):
+        self.do_logout(None)
         return -1
 
     def do_EOF(self, args):
+        self.do_logout(None)
         print
         return -1
 
