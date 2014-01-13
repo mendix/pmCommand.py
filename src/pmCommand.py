@@ -54,7 +54,10 @@ class CLI(cmd.Cmd, object):
         self._print_table(fields, headers, pdus)
 
     def do_status(self, args):
-        outlets = self._pmCommand.status()
+        if args == "" or args == "all":
+            outlets = self._pmCommand.status()
+        else:
+            outlets = self._pmCommand.status(self.parse_outlet_args(args))
         (fields, headers) = self._pmCommand.status_table_info()
         self._print_table(fields, headers, outlets)
 

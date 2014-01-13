@@ -27,12 +27,24 @@ class PMCommand():
     def listipdus_table_info(self):
         return (PDU.fields, PDU.headers)
 
-    def status(self):
-        pdus = self.client.listipdus()
+    def status(self, outlet_list=None):
         outlets = []
-        for pdu in pdus:
-            pdu_id = pdu.text['name']
-            outlets.extend(self.client.outlets(pdu_id))
+        if outlet_list is None:
+            pdus = self.client.listipdus()
+            for pdu in pdus:
+                pdu_id = pdu.text['name']
+                outlets.extend(self.client.outlets(pdu_id))
+        else:
+            too_many_outlets = []
+            pdu_ids = set(map(lambda x: x[0], outlet_list))
+            for pdu_id in pdu_ids:
+                too_many_outlets.extend(self.client.outlets(pdu_id))
+            for pdu_id, outlet_id in outlet_list:
+                outlets.extend(
+                    filter(lambda x: x.text['outlet'] == "%s[%s]" %
+                           (pdu_id, outlet_id), too_many_outlets)
+                )
+
         return outlets
 
     def status_table_info(self):
