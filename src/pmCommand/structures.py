@@ -1,5 +1,4 @@
 from log import logger
-import util
 
 
 class PDU(object):
@@ -47,7 +46,7 @@ class Outlet(object):
         self.text['outlet'] = "%s[%s]" % (pdu_id, self.text['number'])
         self.label['outlet'] = self.text['outlet']
 
-        self.text['name'] = util.remove_outlet_crap(self.label['name'])
+        self.text['name'] = self.label['name']
         self.label['name'] = self.text['name']
 
         self.pdu_id = pdu_id
