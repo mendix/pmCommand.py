@@ -1,7 +1,7 @@
 from log import logger
 import re
 
-pdu_outlet_regex = re.compile(r'^(?P<pdu_id>\w+)\[(?P<outlet_id>\d+)\]$')
+pdu_outlet_regex = re.compile(r'^(?P<pdu_id>[\w-]+)\[(?P<outlet_id>\d+)\]$')
 
 
 def parse_outlet(pdu_outlet):
