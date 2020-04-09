@@ -1,9 +1,9 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
 
-from client import ACSClient
-from structures import PDU, Outlet
-from log import logger
+from pmCommand.client import ACSClient
+from pmCommand.structures import PDU, Outlet
+from pmCommand.log import logger
 
 
 class PMCommand():

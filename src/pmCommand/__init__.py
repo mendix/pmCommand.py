@@ -1,6 +1,6 @@
-import client
-import util
-from core import PMCommand
-from log import logger
+import pmCommand.client
+import pmCommand.util
+from pmCommand.core import PMCommand
+from pmCommand.log import logger
 
 __version__ = 'UNRELEASED'

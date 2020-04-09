@@ -3,8 +3,8 @@
 
 import xml.etree.ElementTree as et
 import requests
-from log import logger
-import structures
+from pmCommand.log import logger
+import pmCommand.structures as structures
 
 
 class ACSClient:

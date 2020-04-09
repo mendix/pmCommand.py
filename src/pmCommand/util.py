@@ -1,7 +1,7 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
 
-from log import logger
+from pmCommand.log import logger
 import re
 
 pdu_outlet_regex = re.compile(r'^(?P<pdu_id>[\w-]+)\[(?P<outlet_id>\d+)\]$')

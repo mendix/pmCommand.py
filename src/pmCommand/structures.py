@@ -1,7 +1,6 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
-
-from log import logger
+from pmCommand.log import logger
 
 
 class PDU(object):
