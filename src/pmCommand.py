@@ -160,7 +160,8 @@ Available commands:
 
         print("Hint: use tab autocompletion for commands!")
 
-if __name__ == '__main__':
+
+def main():
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option(
@@ -203,3 +204,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("^C")
         sys.exit(130)  # 128 + SIGINT
+
+
+if __name__ == '__main__':
+    main()
