@@ -1,3 +1,6 @@
+# Copyright 2014 Mendix
+# MIT license, see LICENSE, see LICENSE
+
 from log import logger
 import re
 

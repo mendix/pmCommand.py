@@ -1,10 +1,7 @@
 #!/usr/bin/python
 #
-# Copyright (c) 2014, Mendix bv
-# All Rights Reserved.
-#
-# http://www.mendix.com/
-#
+# Copyright 2014 Mendix
+# MIT license, see LICENSE
 
 import cmd
 import sys

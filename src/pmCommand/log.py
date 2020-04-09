@@ -1,9 +1,5 @@
-#
-# Copyright (c) 2009-2013, Mendix bv
-# All Rights Reserved.
-#
-# http://www.mendix.com/
-#
+# Copyright 2014 Mendix
+# MIT license, see LICENSE, see LICENSE
 
 import logging
 import logging.handlers
