@@ -12,9 +12,10 @@ import getpass
 
 
 class CLI(cmd.Cmd):
-    def __init__(self, user_at_host):
+    def __init__(self, baseurl, username):
         cmd.Cmd.__init__(self)
-        self._username, self._host = user_at_host.split('@')
+        self._baseurl = baseurl
+        self._username = username
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
         self.prompt = "pmCommand# "
@@ -35,9 +36,8 @@ class CLI(cmd.Cmd):
             logging.error(e)
 
     def do_login(self, args):
-        password = getpass.getpass("Enter password for %s@%s: " %
-                                   (self._username, self._host))
-        self._pmCommand.login(self._host, self._username, password)
+        password = getpass.getpass("Enter password for {}: ".format(self._username))
+        self._pmCommand.login(self._baseurl, self._username, password)
         logging.debug("Session idle timeout: {}".format(
             self._pmCommand.get_session_idle_timeout()))
 
@@ -221,13 +221,19 @@ def main():
         help="decrease verbosity of output (-qq to be even more quiet)"
     )
     parser.add_argument(
-        'user_host',
-        help="<user>@<host>, e.g. admin@10.13.3.7"
+        '-u',
+        '--user',
+        default='admin',
+        help="username to log in with",
+    )
+    parser.add_argument(
+        'baseurl',
+        help="Base url of the appliance, e.g. http://10.13.3.7",
     )
     args = parser.parse_args()
     start_logging(args.verbose, args.quiet)
 
-    cli = CLI(args.user_host)
+    cli = CLI(args.baseurl, args.user)
     cli.onecmd("login")
     cli.cmdloop_handle_ctrl_c()
 

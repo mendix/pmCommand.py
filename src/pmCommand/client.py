@@ -65,9 +65,9 @@ class ACSClient:
                 action, et_error.get("label")))
         return et_response
 
-    def login(self, host, username, password):
-        self._url = "https://%s/appliance/avtrans" % host
-        logger.debug("Logging into url %s as %s" % (self._url, username))
+    def login(self, baseurl, username, password):
+        self._url = '{}/appliance/avtrans'.format(baseurl.rstrip('/'))
+        logging.debug("Logging into url {} as {}".format(self._url, username))
 
         et_section = et.Element("section")
         et_section.set("structure", "login")

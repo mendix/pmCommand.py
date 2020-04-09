@@ -14,8 +14,8 @@ class PMCommand():
     def reload_config(self):
         self.client = ACSClient()
 
-    def login(self, host, username, password):
-        self.client.login(host, username, password)
+    def login(self, baseurl, username, password):
+        self.client.login(baseurl, username, password)
 
     def logout(self):
         self.client.logout()
