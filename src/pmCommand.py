@@ -17,6 +17,7 @@ class CLI(cmd.Cmd):
         self._username, self._host = user_at_host.split('@')
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
+        self.prompt = "pmCommand# "
 
     def cmdloop_handle_ctrl_c(self):
         quit = False
@@ -42,7 +43,6 @@ class CLI(cmd.Cmd):
         if success:
             logging.debug("Session idle timeout: {}".format(
                 self._pmCommand.get_session_idle_timeout()))
-            self.prompt = "pmCommand(%s): " % self._host
 
     def do_logout(self, args):
         self._pmCommand.logout()
