@@ -134,8 +134,8 @@ class CLI(cmd.Cmd):
         return -1
 
     def do_EOF(self, args):
+        print("exit")
         self.do_logout(None)
-        print
         return -1
 
     # if the emptyline function is not defined, Cmd will automagically
