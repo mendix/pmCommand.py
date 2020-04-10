@@ -21,8 +21,8 @@ class CLI(cmd.Cmd):
     def onecmd(self, line):
         try:
             return super(CLI, self).onecmd(line)
-        except RuntimeError as re:
-            logging.error(re.message)
+        except pmCommand.Error as e:
+            logging.error(e)
         except KeyboardInterrupt:
             print
 

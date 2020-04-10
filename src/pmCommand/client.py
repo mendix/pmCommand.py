@@ -4,6 +4,7 @@
 import logging
 import xml.etree.ElementTree as et
 import requests
+import pmCommand
 import pmCommand.structures as structures
 
 
@@ -45,7 +46,7 @@ class ACSClient:
 
     def _request(self, action, path=None, pathvar=None, payload=None):
         if self._url is None:
-            raise RuntimeError("Please login first.")
+            raise pmCommand.Error("Please login first.")
 
         avtrans = self._wrap(action, path, pathvar, payload)
         xml = et.tostring(avtrans)
@@ -66,7 +67,7 @@ class ACSClient:
         if ((et_response.find("./action").text == "login"
              and action != "login" and action != "logout")):
             self._sid = None
-            raise RuntimeError("Invalid session, please login first.")
+            raise pmCommand.Error("Invalid session, please login first.")
 
         return et_response
 

@@ -24,3 +24,7 @@ def monkeypatch_logging():
 
 if not hasattr(logging, 'trace'):
     monkeypatch_logging()
+
+
+class Error(Exception):
+    pass
