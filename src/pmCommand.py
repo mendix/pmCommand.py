@@ -5,6 +5,7 @@
 
 import argparse
 import cmd
+import logging
 import sys
 import pmCommand
 import getpass
@@ -162,6 +163,48 @@ Available commands:
         print("Hint: use tab autocompletion for commands!")
 
 
+def start_logging(verbose, quiet):
+    verbosity = quiet - verbose
+    verbosity = verbosity * 10 + 20
+    if verbosity > 50:
+        verbosity = 100
+    if verbosity < 5:
+        verbosity = 5
+
+    class LogFilter(logging.Filter):
+        def __init__(self, level, ge):
+            self.level = level
+            # log levels greater than and equal to (True), or below (False)
+            self.ge = ge
+
+        def filter(self, record):
+            if self.ge:
+                return record.levelno >= self.level
+            return record.levelno < self.level
+
+    logformatting = "%(levelname)s - %(message)s"
+    consolelogformatter = logging.Formatter(logformatting)
+
+    # log everything below ERROR to to stdout
+    stdoutlog = logging.StreamHandler(sys.stdout)
+    stdoutlog.setFormatter(consolelogformatter)
+    stdoutfilter = LogFilter(logging.ERROR, False)
+    stdoutlog.addFilter(stdoutfilter)
+    stdoutlog.setLevel(verbosity)
+
+    # log everything that's ERROR and more serious to stderr
+    stderrlog = logging.StreamHandler(sys.stderr)
+    stderrlog.setFormatter(consolelogformatter)
+    stderrfilter = LogFilter(logging.ERROR, True)
+    stderrlog.addFilter(stderrfilter)
+    stderrlog.setLevel(verbosity)
+
+    rootlogger = logging.getLogger()
+    rootlogger.setLevel(0)
+    rootlogger.addHandler(stdoutlog)
+    rootlogger.addHandler(stderrlog)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -183,20 +226,7 @@ def main():
         help="<user>@<host>, e.g. admin@10.13.3.7"
     )
     args = parser.parse_args()
-
-    # how verbose should we be? see
-    # http://docs.python.org/release/2.7/library/logging.html#logging-levels
-    verbosity = args.quiet - args.verbose
-    if args.quiet:
-        verbosity = verbosity + args.quiet
-    if args.verbose:
-        verbosity = verbosity - args.verbose
-    verbosity = verbosity * 10 + 20
-    if verbosity > 50:
-        verbosity = 100
-    if verbosity < 5:
-        verbosity = 5
-    logger.setLevel(verbosity)
+    start_logging(args.verbose, args.quiet)
 
     cli = CLI(args.user_host)
     try:
