@@ -11,8 +11,7 @@ import pmCommand
 import getpass
 
 
-class CLI(cmd.Cmd, object):
-
+class CLI(cmd.Cmd):
     def __init__(self, user_at_host):
         cmd.Cmd.__init__(self)
         (self._username, self._host) = user_at_host.split('@')

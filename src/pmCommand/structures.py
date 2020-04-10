@@ -4,7 +4,7 @@
 import logging
 
 
-class PDU(object):
+class PDU:
 
     fields = ('name', 'vendor', 'model', 'position', 'status',
               'outlets', 'current', 'power', 'alarm')
@@ -29,7 +29,7 @@ class PDU(object):
         return self.text['name'] < other.text['name']
 
 
-class Outlet(object):
+class Outlet:
 
     fields = ('outlet', 'name', 'status', 'current')
 
