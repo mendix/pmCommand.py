@@ -102,7 +102,7 @@ class CLI(cmd.Cmd):
         if self._sort:
             rows = sorted(rows)
 
-        print
+        print()
 
         output = ['']
         maxlen = {}
@@ -123,7 +123,7 @@ class CLI(cmd.Cmd):
                 output.append(row.label[field].ljust(maxlen[field]))
             print('  '.join(output))
 
-        print
+        print()
 
     def do_exit(self, args):
         self.do_logout(None)
