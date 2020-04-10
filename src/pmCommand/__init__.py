@@ -3,8 +3,6 @@ import pmCommand.client  # noqa
 import pmCommand.util  # noqa
 from pmCommand.core import PMCommand  # noqa
 
-__version__ = 'UNRELEASED'
-
 
 def monkeypatch_logging():
     # register trace logging possibility

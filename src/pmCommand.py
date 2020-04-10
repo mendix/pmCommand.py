@@ -14,7 +14,6 @@ import getpass
 class CLI(cmd.Cmd, object):
 
     def __init__(self, user_at_host):
-        logging.debug("Using pmCommand version {}".format(pmCommand.__version__))
         cmd.Cmd.__init__(self)
         (self._username, self._host) = user_at_host.split('@')
         self._pmCommand = pmCommand.PMCommand()
