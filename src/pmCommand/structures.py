@@ -6,8 +6,8 @@ import logging
 
 class PDU:
 
-    fields = ('name', 'vendor', 'model', 'position', 'status',
-              'outlets', 'current', 'power', 'alarm')
+    fields = 'name', 'vendor', 'model', 'position', 'status', \
+        'outlets', 'current', 'power', 'alarm'
 
     headers = {}
 
@@ -23,7 +23,7 @@ class PDU:
             ("pdu_power", "power"),
             ("pdu_alarm", "alarm"),
         ]
-        (self.text, self.label) = load_array(et_pdu, PDU.headers, mapping)
+        self.text, self.label = load_array(et_pdu, PDU.headers, mapping)
 
     def __lt__(self, other):
         return self.text['name'] < other.text['name']
@@ -31,7 +31,7 @@ class PDU:
 
 class Outlet:
 
-    fields = ('outlet', 'name', 'status', 'current')
+    fields = 'outlet', 'name', 'status', 'current'
 
     headers = {}
 
@@ -43,7 +43,7 @@ class Outlet:
             ("outlet_current", "current"),
             ("outlet_power", "power"),
         ]
-        (self.text, self.label) = load_array(et_outlet, Outlet.headers, mapping)
+        self.text, self.label = load_array(et_outlet, Outlet.headers, mapping)
 
         Outlet.headers['outlet'] = "Outlet"
         self.text['outlet'] = "%s[%s]" % (pdu_id, self.text['number'])
@@ -55,8 +55,8 @@ class Outlet:
         self.pdu_id = pdu_id
 
     def __lt__(self, other):
-        return ((self.pdu_id, int(self.text['number'])) <
-                (other.pdu_id, int(other.text['number'])))
+        return (self.pdu_id, int(self.text['number'])) < \
+            (other.pdu_id, int(other.text['number']))
 
 
 def load_array(et_array, headers, mapping):
@@ -77,4 +77,4 @@ def load_array(et_array, headers, mapping):
             logging.warn("Different header for new row detected: {} -> {}".format(
                 current_header, header))
 
-    return (text, label)
+    return text, label

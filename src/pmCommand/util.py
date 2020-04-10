@@ -11,6 +11,6 @@ def parse_outlet(pdu_outlet):
     match = pdu_outlet_regex.match(pdu_outlet)
     if match is None:
         logging.error("Invalid outlet: {}".format(pdu_outlet))
-        return (None, None)
+        return None, None
     groupdict = match.groupdict()
-    return (groupdict['pdu_id'], groupdict['outlet_id'])
+    return groupdict['pdu_id'], groupdict['outlet_id']

@@ -24,7 +24,7 @@ class PMCommand():
         return self.client.listipdus()
 
     def listipdus_table_info(self):
-        return (PDU.fields, PDU.headers)
+        return PDU.fields, PDU.headers
 
     def status(self, outlet_list=None):
         outlets = []
@@ -47,7 +47,7 @@ class PMCommand():
         return outlets
 
     def status_table_info(self):
-        return (Outlet.fields, Outlet.headers)
+        return Outlet.fields, Outlet.headers
 
     def on(self, pdu_id, outlet_id):
         return self.outlet_action("on", pdu_id, outlet_id)

@@ -52,7 +52,7 @@ class ACSClient:
         xml = et.tostring(avtrans)
         logging.trace(">>> {}".format(xml))
         response = requests.post(self._url, data=xml, headers=self._headers, verify=False)
-        if (response.status_code != 200):
+        if response.status_code != 200:
             logging.error("non-200 http status code: {} {} {}".format(
                           response.status_code,
                           response.headers,
@@ -64,8 +64,8 @@ class ACSClient:
         if et_error is not None:
             logging.error(et_error.get("label"))
 
-        if ((et_response.find("./action").text == "login"
-             and action != "login" and action != "logout")):
+        if et_response.find("./action").text == "login" \
+                and action != "login" and action != "logout":
             self._sid = None
             raise pmCommand.Error("Invalid session, please login first.")
 
@@ -99,7 +99,7 @@ class ACSClient:
 
     def logout(self):
         et_response = self._request(action="logout")
-        if (et_response.find("./action").text == "login"):
+        if et_response.find("./action").text == "login":
             logging.info("Logout successful.")
             self._sid = None
             return True

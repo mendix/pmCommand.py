@@ -14,7 +14,7 @@ import getpass
 class CLI(cmd.Cmd):
     def __init__(self, user_at_host):
         cmd.Cmd.__init__(self)
-        (self._username, self._host) = user_at_host.split('@')
+        self._username, self._host = user_at_host.split('@')
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
 
@@ -53,7 +53,7 @@ class CLI(cmd.Cmd):
 
     def do_listipdus(self, args):
         pdus = self._pmCommand.listipdus()
-        (fields, headers) = self._pmCommand.listipdus_table_info()
+        fields, headers = self._pmCommand.listipdus_table_info()
         self._print_table(fields, headers, pdus)
 
     def do_status(self, args):
@@ -61,11 +61,11 @@ class CLI(cmd.Cmd):
             outlets = self._pmCommand.status()
         else:
             outlets = self._pmCommand.status(self.parse_outlet_args(args))
-        (fields, headers) = self._pmCommand.status_table_info()
+        fields, headers = self._pmCommand.status_table_info()
         self._print_table(fields, headers, outlets)
 
     def outlet_action(self, action, args):
-        for (pdu_id, outlet_id) in self.parse_outlet_args(args):
+        for pdu_id, outlet_id in self.parse_outlet_args(args):
             self._pmCommand.outlet_action(action, pdu_id, outlet_id)
 
     def parse_outlet_args(self, args):
@@ -73,7 +73,7 @@ class CLI(cmd.Cmd):
         if args != '':
             pdu_outlets = [x.strip() for x in args.split(',')]
             for pdu_outlet in pdu_outlets:
-                (pdu_id, outlet_id) = pmCommand.util.parse_outlet(pdu_outlet)
+                pdu_id, outlet_id = pmCommand.util.parse_outlet(pdu_outlet)
                 if pdu_id is not None and outlet_id is not None:
                     pdu_outlet_tuples.append((pdu_id, outlet_id))
         else:
