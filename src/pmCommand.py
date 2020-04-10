@@ -3,6 +3,7 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE
 
+import argparse
 import cmd
 import sys
 import pmCommand
@@ -162,31 +163,34 @@ Available commands:
 
 
 def main():
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option(
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
         "-v",
         "--verbose",
         action="count",
-        dest="verbose",
+        default=0,
         help="increase verbosity of output (-vv to be even more verbose)"
     )
-    parser.add_option(
+    parser.add_argument(
         "-q",
         "--quiet",
         action="count",
-        dest="quiet",
+        default=0,
         help="decrease verbosity of output (-qq to be even more quiet)"
     )
-    (options, args) = parser.parse_args()
+    parser.add_argument(
+        'user_host',
+        help="<user>@<host>, e.g. admin@10.13.3.7"
+    )
+    args = parser.parse_args()
 
     # how verbose should we be? see
     # http://docs.python.org/release/2.7/library/logging.html#logging-levels
-    verbosity = 0
-    if options.quiet:
-        verbosity = verbosity + options.quiet
-    if options.verbose:
-        verbosity = verbosity - options.verbose
+    verbosity = args.quiet - args.verbose
+    if args.quiet:
+        verbosity = verbosity + args.quiet
+    if args.verbose:
+        verbosity = verbosity - args.verbose
     verbosity = verbosity * 10 + 20
     if verbosity > 50:
         verbosity = 100
@@ -194,10 +198,7 @@ def main():
         verbosity = 5
     logger.setLevel(verbosity)
 
-    if len(args) == 0:
-        sys.stderr.write("Need user@host positional argument.\n")
-        sys.exit(1)
-    cli = CLI(args[0])
+    cli = CLI(args.user_host)
     try:
         cli.onecmd("login")
         cli.cmdloop()
