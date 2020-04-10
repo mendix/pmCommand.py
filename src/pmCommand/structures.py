@@ -1,6 +1,7 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
-from pmCommand.log import logger
+
+import logging
 
 
 class PDU(object):
@@ -73,7 +74,7 @@ def load_array(et_array, headers, mapping):
         header = et_param.get("label")
         current_header = headers.setdefault(us, header)
         if current_header != header:
-            logger.warn("Different header for new row detected: %s -> %s"
-                        % (current_header, header))
+            logging.warn("Different header for new row detected: {} -> {}".format(
+                current_header, header))
 
     return (text, label)

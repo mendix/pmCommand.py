@@ -1,9 +1,9 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
 
+import logging
 import xml.etree.ElementTree as et
 import requests
-from pmCommand.log import logger
 import pmCommand.structures as structures
 
 
@@ -49,19 +49,19 @@ class ACSClient:
 
         avtrans = self._wrap(action, path, pathvar, payload)
         xml = et.tostring(avtrans)
-        logger.trace(">>> %s" % xml)
+        logging.trace(">>> {}".format(xml))
         response = requests.post(self._url, data=xml, headers=self._headers, verify=False)
         if (response.status_code != 200):
-            logger.error("non-200 http status code: %s %s %s" %
-                         response.status_code,
-                         response.headers,
-                         response.text)
+            logging.error("non-200 http status code: {} {} {}".format(
+                          response.status_code,
+                          response.headers,
+                          response.text))
             return None
-        logger.trace("<<< %s" % response.text)
+        logging.trace("<<< {}".format(response.text))
         et_response = et.fromstring(response.text)
         et_error = et_response.find("./error")
         if et_error is not None:
-            logger.error(et_error.get("label"))
+            logging.error(et_error.get("label"))
 
         if ((et_response.find("./action").text == "login"
              and action != "login" and action != "logout")):
@@ -92,14 +92,14 @@ class ACSClient:
         sid = response.find("./sid").text
         if sid is None:
             return False
-        logger.debug("Login successful, got sid: %s" % sid)
+        logging.debug("Login successful, got sid: {}".format(sid))
         self._sid = sid
         return True
 
     def logout(self):
         et_response = self._request(action="logout")
         if (et_response.find("./action").text == "login"):
-            logger.info("Logout successful.")
+            logging.info("Logout successful.")
             self._sid = None
             return True
         # haven't seen any way yet to end up here
@@ -137,12 +137,12 @@ class ACSClient:
         et_outlet = et_response.find("./payload/section[@id='outlet_details']"
                                      "/array[@id='%s']" % outlet_id)
         if et_outlet is None:
-            logger.error("Outlet %s[%s] not found." % (pdu_id, outlet_id))
+            logging.error("Outlet {}[{}] not found.".format(pdu_id, outlet_id))
         else:
             outlet_name = et_outlet.find("./parameter[@id='outlet_name']/value").text
             outlet_status = et_outlet.find("./parameter[@id='status']/value").text
-            logger.info("%s[%s]: status of outlet %s is now: %s" %
-                        (pdu_id, outlet_id, outlet_name, outlet_status))
+            logging.info("{}[{}]: status of outlet {} is now: {}".format(
+                pdu_id, outlet_id, outlet_name, outlet_status))
 
     def save(self, pdu_id):
         et_section = et.Element("section")

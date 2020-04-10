@@ -10,13 +10,11 @@ import sys
 import pmCommand
 import getpass
 
-from pmCommand import logger
-
 
 class CLI(cmd.Cmd, object):
 
     def __init__(self, user_at_host):
-        logger.debug('Using pmCommand version %s' % pmCommand.__version__)
+        logging.debug("Using pmCommand version {}".format(pmCommand.__version__))
         cmd.Cmd.__init__(self)
         (self._username, self._host) = user_at_host.split('@')
         self._pmCommand = pmCommand.PMCommand()
@@ -26,7 +24,7 @@ class CLI(cmd.Cmd, object):
         try:
             return super(CLI, self).onecmd(line)
         except RuntimeError as re:
-            logger.error(re.message)
+            logging.error(re.message)
         except KeyboardInterrupt:
             print
 
@@ -37,8 +35,8 @@ class CLI(cmd.Cmd, object):
                                         self._username,
                                         password)
         if success:
-            logger.debug("Session idle timeout: %s" %
-                         self._pmCommand.get_session_idle_timeout())
+            logging.debug("Session idle timeout: {}".format(
+                self._pmCommand.get_session_idle_timeout()))
             self.prompt = "pmCommand(%s): " % self._host
 
     def do_logout(self, args):
@@ -46,8 +44,7 @@ class CLI(cmd.Cmd, object):
 
     def do_sort(self, args):
         self._sort = not self._sort
-        logger.info("Sorted output is now %s." %
-                    ("on" if self._sort else "off",))
+        logging.info("Sorted output is now {}.".format("on" if self._sort else "off"))
 
     def do_listipdus(self, args):
         pdus = self._pmCommand.listipdus()
@@ -75,7 +72,7 @@ class CLI(cmd.Cmd, object):
                 if pdu_id is not None and outlet_id is not None:
                     pdu_outlet_tuples.append((pdu_id, outlet_id))
         else:
-            logger.error("No outlet specified.")
+            logging.error("No outlet specified.")
         return pdu_outlet_tuples
 
     def do_on(self, args):

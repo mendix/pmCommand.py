@@ -1,9 +1,9 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
 
+import logging
 from pmCommand.client import ACSClient
 from pmCommand.structures import PDU, Outlet
-from pmCommand.log import logger
 
 
 class PMCommand():
@@ -69,7 +69,7 @@ class PMCommand():
 
     def save(self):
         for pdu in self.client.listipdus():
-            logger.info("Saving configuration on PDU %s." % pdu.text['name'])
+            logging.info("Saving configuration on PDU {}.".format(pdu.text['name']))
             self.client.save(pdu.text['name'])
 
     def get_session_idle_timeout(self):
