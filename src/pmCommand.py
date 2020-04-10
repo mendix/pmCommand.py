@@ -18,13 +18,20 @@ class CLI(cmd.Cmd):
         self._pmCommand = pmCommand.PMCommand()
         self._sort = True
 
+    def cmdloop_handle_ctrl_c(self):
+        quit = False
+        while quit is not True:
+            try:
+                self.cmdloop()
+                quit = True
+            except KeyboardInterrupt:
+                print()
+
     def onecmd(self, line):
         try:
             return super(CLI, self).onecmd(line)
         except pmCommand.Error as e:
             logging.error(e)
-        except KeyboardInterrupt:
-            print
 
     def do_login(self, args):
         password = getpass.getpass("Enter password for %s@%s: " %
@@ -224,12 +231,8 @@ def main():
     start_logging(args.verbose, args.quiet)
 
     cli = CLI(args.user_host)
-    try:
-        cli.onecmd("login")
-        cli.cmdloop()
-    except KeyboardInterrupt:
-        print("^C")
-        sys.exit(130)  # 128 + SIGINT
+    cli.onecmd("login")
+    cli.cmdloop_handle_ctrl_c()
 
 
 if __name__ == '__main__':
