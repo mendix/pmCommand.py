@@ -67,7 +67,9 @@ class CLI(cmd.Cmd):
             self._pmCommand.outlet_action(action, pdu_id, outlet_id)
 
     def parse_outlet_args(self, args):
-        pdu_outlet_tuples = []
+        # split arg text into list of tuples with pdu_id, outlet_id
+        # e.g.  'power3[7],power5[7]' -> [('power3', '7'), ('power5', '7')]
+        pdu_outlet_tuples = []  # list of tuples (pdu_id, outlet_id)
         if args != '':
             pdu_outlets = [x.strip() for x in args.split(',')]
             for pdu_outlet in pdu_outlets:
