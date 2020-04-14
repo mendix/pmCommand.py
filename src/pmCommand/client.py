@@ -52,23 +52,17 @@ class ACSClient:
         xml = et.tostring(avtrans)
         logging.trace(">>> {}".format(xml))
         response = requests.post(self._url, data=xml, headers=self._headers, verify=False)
-        if response.status_code != 200:
-            logging.error("non-200 http status code: {} {} {}".format(
-                          response.status_code,
-                          response.headers,
-                          response.text))
-            return None
+        response.raise_for_status()
         logging.trace("<<< {}".format(response.text))
         et_response = et.fromstring(response.text)
         et_error = et_response.find("./error")
-        if et_error is not None:
-            logging.error(et_error.get("label"))
-
         if et_response.find("./action").text == "login" \
                 and action != "login" and action != "logout":
             self._sid = None
             raise pmCommand.Error("Invalid session, please login first.")
-
+        if et_error is not None:
+            raise pmCommand.Error("Error while handling {}: {}".format(
+                action, et_error.get("label")))
         return et_response
 
     def login(self, host, username, password):
@@ -87,15 +81,10 @@ class ACSClient:
         et.SubElement(parameter_password, "value").text = password
 
         response = self._request('login', payload=et_section)
-        if response is None:
-            return False
-
+        # if we end up here, the login was successful
         sid = response.find("./sid").text
-        if sid is None:
-            return False
         logging.debug("Login successful, got sid: {}".format(sid))
         self._sid = sid
-        return True
 
     def logout(self):
         et_response = self._request(action="logout")

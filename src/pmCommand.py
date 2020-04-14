@@ -37,12 +37,9 @@ class CLI(cmd.Cmd):
     def do_login(self, args):
         password = getpass.getpass("Enter password for %s@%s: " %
                                    (self._username, self._host))
-        success = self._pmCommand.login(self._host,
-                                        self._username,
-                                        password)
-        if success:
-            logging.debug("Session idle timeout: {}".format(
-                self._pmCommand.get_session_idle_timeout()))
+        self._pmCommand.login(self._host, self._username, password)
+        logging.debug("Session idle timeout: {}".format(
+            self._pmCommand.get_session_idle_timeout()))
 
     def do_logout(self, args):
         self._pmCommand.logout()
