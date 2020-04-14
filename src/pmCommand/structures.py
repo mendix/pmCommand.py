@@ -1,80 +1,72 @@
 # Copyright 2014 Mendix
 # MIT license, see LICENSE, see LICENSE
 
-import logging
+
+class DeviceFromXML:
+    def __init__(self, et_array):
+        self.headers = {}  # description, useful as column header
+        self.values = {}
+
+        for et_param in et_array.findall("./parameter"):
+            param_id = et_param.get("id")  # e.g. pduId_Index
+            header = et_param.get("label")
+            if header is None:
+                continue  # hidden, e.g. the 'thresholds' field of an ipdu
+            self.headers[param_id] = et_param.get("label")
+            et_value = et_param.find("./value")
+            self.values[param_id] = et_value.get("label")
+
+    def __getattr__(self, attr):
+        if attr in self.values:
+            return self.values[attr]
+        else:
+            raise AttributeError
 
 
-class PDU:
+class PDU(DeviceFromXML):
+    """
+    Load PDU information from an XML PDU object
 
-    fields = 'name', 'vendor', 'model', 'position', 'status', \
-        'outlets', 'current', 'power', 'alarm'
+    Known attributes (all are stored as text):
 
-    headers = {}
-
+    Attribute     Header              Example value
+    =========     ===========         =======
+    pduId_Index   PDU ID              power3-r17
+    pdu_vendor    Vendor              Avocent
+    pdu_model     Model               PM3000/10/16A
+    pdu_pos       Position            ttyS4/1
+    pdu_status    Status              On Line
+    pdu_outlets   Outlets (On/Total)  8/10
+    pdu_current   Current (A)         4.2
+    pdu_power     Power (W)           1002.0
+    pdu_alarm     Alarm               Normal
+    """
     def __init__(self, et_pdu):
-        mapping = [
-            ("pduId_Index", "name"),
-            ("pdu_vendor", "vendor"),
-            ("pdu_model", "model"),
-            ("pdu_pos", "position"),
-            ("pdu_status", "status"),
-            ("pdu_outlets", "outlets"),
-            ("pdu_current", "current"),
-            ("pdu_power", "power"),
-            ("pdu_alarm", "alarm"),
-        ]
-        self.text, self.label = load_array(et_pdu, PDU.headers, mapping)
+        super().__init__(et_pdu)
 
     def __lt__(self, other):
-        return self.text['name'] < other.text['name']
+        return self.pduId_Index < other.pduId_Index
 
 
-class Outlet:
+class Outlet(DeviceFromXML):
+    """
+    Load Outlet information
 
-    fields = 'outlet', 'name', 'status', 'current'
+    Known attributes (all are stored as text):
 
-    headers = {}
-
+    Attribute        Header         Example value
+    =========        ===========    =======
+    outlet_number    Outlet         6
+    outlet_name      Name           HE20-flapsie-L
+    status           Status         ON(locked)
+    circuit          Bank           N/A
+    outlet_current   Current (A)    0.4
+    outlet_power     Power (W)      110.0
+    """
     def __init__(self, et_outlet, pdu_id):
-        mapping = [
-            ("outlet_number", "number"),
-            ("outlet_name", "name"),
-            ("status", "status"),
-            ("outlet_current", "current"),
-            ("outlet_power", "power"),
-        ]
-        self.text, self.label = load_array(et_outlet, Outlet.headers, mapping)
-
-        Outlet.headers['outlet'] = "Outlet"
-        self.text['outlet'] = "%s[%s]" % (pdu_id, self.text['number'])
-        self.label['outlet'] = self.text['outlet']
-
-        self.text['name'] = self.label['name']
-        self.label['name'] = self.text['name']
-
-        self.pdu_id = pdu_id
+        super().__init__(et_outlet)
+        self.pdu_id = pdu_id  # for sorting purposes
 
     def __lt__(self, other):
-        return (self.pdu_id, int(self.text['number'])) < \
-            (other.pdu_id, int(other.text['number']))
-
-
-def load_array(et_array, headers, mapping):
-
-    text = {}
-    label = {}
-
-    for them, us in mapping:
-        et_param = et_array.find("./parameter[@id='%s']" % them)
-        et_value = et_param.find("./value")
-
-        text[us] = et_value.text
-        label[us] = et_value.get("label")
-
-        header = et_param.get("label")
-        current_header = headers.setdefault(us, header)
-        if current_header != header:
-            logging.warn("Different header for new row detected: {} -> {}".format(
-                current_header, header))
-
-    return text, label
+        return (self.pdu_id, int(self.outlet_number)) < \
+            (other.pdu_id, int(other.outlet_number))

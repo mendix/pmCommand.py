@@ -50,17 +50,24 @@ class CLI(cmd.Cmd):
         logging.info("Sorted output is now {}.".format("on" if self._sort else "off"))
 
     def do_listipdus(self, args):
-        pdus = self._pmCommand.listipdus()
-        fields, headers = self._pmCommand.listipdus_table_info()
-        self._print_table(fields, headers, pdus)
+        pmCommand.util.print_table(self._pmCommand.listipdus(), self._sort)
 
     def do_status(self, args):
         if args == "" or args == "all":
             outlets = self._pmCommand.status()
         else:
             outlets = self._pmCommand.status(self.parse_outlet_args(args))
-        fields, headers = self._pmCommand.status_table_info()
-        self._print_table(fields, headers, outlets)
+
+        def outlet_number_filter(device, attr):
+            # apply output filter on the outlet_number column to instead
+            # display the combined pdu_id[outlet_number], which is copy
+            # pastable as input arg for outlet actions like on, off, lock etc.
+            return "{}[{}]".format(device.pdu_id, device.values[attr])
+
+        pmCommand.util.print_table(
+            outlets.values(), self._sort,
+            output_filters={'outlet_number': outlet_number_filter},
+        )
 
     def outlet_action(self, action, args):
         for pdu_id, outlet_id in self.parse_outlet_args(args):
@@ -95,33 +102,6 @@ class CLI(cmd.Cmd):
 
     def do_save(self, args):
         self._pmCommand.save()
-
-    def _print_table(self, fields, headers, rows):
-        if self._sort:
-            rows = sorted(rows)
-
-        print()
-
-        output = ['']
-        maxlen = {}
-        for field in fields:
-            maxlen[field] = max(len(headers[field]),
-                                max([len(row.label[field]) for row in rows]))
-            output.append(headers[field].ljust(maxlen[field]))
-        print('  '.join(output))
-
-        output = ['']
-        for field in fields:
-            output.append('=' * maxlen[field])
-        print('  '.join(output))
-
-        for row in rows:
-            output = ['']
-            for field in fields:
-                output.append(row.label[field].ljust(maxlen[field]))
-            print('  '.join(output))
-
-        print()
 
     def do_exit(self, args):
         self.do_logout(None)
