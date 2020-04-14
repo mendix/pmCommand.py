@@ -80,9 +80,9 @@ class ACSClient:
         parameter_password.set("structure", "password")
         et.SubElement(parameter_password, "value").text = password
 
-        response = self._request('login', payload=et_section)
+        et_response = self._request('login', payload=et_section)
         # if we end up here, the login was successful
-        sid = response.find("./sid").text
+        sid = et_response.find("./sid").text
         logging.debug("Login successful, got sid: {}".format(sid))
         self._sid = sid
 
