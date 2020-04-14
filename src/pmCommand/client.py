@@ -88,12 +88,11 @@ class ACSClient:
 
     def logout(self):
         et_response = self._request(action="logout")
-        if et_response.find("./action").text == "login":
-            logging.info("Logout successful.")
-            self._sid = None
-            return True
-        # haven't seen any way yet to end up here
-        return False
+        if et_response.find("./action").text != 'login':
+            raise pmCommand.Error(
+                    "Logout failure. Please report this as a bug if you're able to reproduce it.")
+        logging.info("Logout successful.")
+        self._sid = None
 
     def listipdus(self):
         et_response = self._request(action="get",
