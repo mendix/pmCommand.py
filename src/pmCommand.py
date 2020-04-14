@@ -40,6 +40,7 @@ class CLI(cmd.Cmd):
         self._pmCommand.login(self._baseurl, self._username, password)
         logging.debug("Session idle timeout: {}".format(
             self._pmCommand.get_session_idle_timeout()))
+        logging.info("{} - {}".format(self._pmCommand.product, self._pmCommand.welcome))
 
     def do_logout(self, args):
         self._pmCommand.logout()

@@ -86,6 +86,11 @@ class ACSClient:
         logging.debug("Login successful, got sid: {}".format(sid))
         self._sid = sid
 
+        et_welcome = et_response.find("./payload/section[@id='welcome']")
+        welcome = et_welcome.find("./parameter[@id='welcome']/value").text
+        product = et_welcome.find("./parameter[@id='product']/value").text
+        return welcome, product
+
     def logout(self):
         et_response = self._request(action="logout")
         if et_response.find("./action").text != 'login':

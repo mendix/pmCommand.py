@@ -15,7 +15,7 @@ class PMCommand():
         self.client = ACSClient()
 
     def login(self, baseurl, username, password):
-        self.client.login(baseurl, username, password)
+        self.welcome, self.product = self.client.login(baseurl, username, password)
 
     def logout(self):
         self.client.logout()
