@@ -35,14 +35,14 @@ class PMCommand():
                 outlets.extend(self.client.outlets(pdu_id))
         else:
             too_many_outlets = []
-            pdu_ids = set(map(lambda x: x[0], outlet_list))
+            pdu_ids = set([_[0] for _ in outlet_list])
             for pdu_id in pdu_ids:
                 too_many_outlets.extend(self.client.outlets(pdu_id))
             for pdu_id, outlet_id in outlet_list:
-                outlets.extend(
-                    filter(lambda x: x.text['outlet'] == "%s[%s]" %
-                           (pdu_id, outlet_id), too_many_outlets)
-                )
+                outlets.extend([
+                    _ for _ in too_many_outlets
+                    if _.text['outlet'] == '{}[{}]'.format(pdu_id, outlet_id)
+                ])
 
         return outlets
 
