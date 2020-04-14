@@ -70,9 +70,7 @@ class CLI(cmd.Cmd):
         if args != '':
             pdu_outlets = [x.strip() for x in args.split(',')]
             for pdu_outlet in pdu_outlets:
-                pdu_id, outlet_id = pmCommand.util.parse_outlet(pdu_outlet)
-                if pdu_id is not None and outlet_id is not None:
-                    pdu_outlet_tuples.append((pdu_id, outlet_id))
+                pdu_outlet_tuples.append(pmCommand.util.parse_outlet(pdu_outlet))
         else:
             logging.error("No outlet specified.")
         return pdu_outlet_tuples
