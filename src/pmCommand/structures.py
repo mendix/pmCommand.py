@@ -35,8 +35,14 @@ class PDU(DeviceFromXML):
     pdu_vendor    Vendor              Avocent
     pdu_model     Model               PM3000/10/16A
     pdu_pos       Position            ttyS4/1
+
+    (when connecting via a Cyclades ACS)
     pdu_status    Status              On Line
     pdu_outlets   Outlets (On/Total)  8/10
+
+    (when connecting directly to a PM)
+    pdu_status    Status (On/Total)   8/10
+
     pdu_current   Current (A)         4.2
     pdu_power     Power (W)           1002.0
     pdu_alarm     Alarm               Normal
