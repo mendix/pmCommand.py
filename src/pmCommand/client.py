@@ -7,6 +7,8 @@ import requests
 import pmCommand
 import pmCommand.structures as structures
 
+requests.packages.urllib3.disable_warnings()
+
 
 class ACSClient:
 
