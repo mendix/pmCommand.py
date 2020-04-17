@@ -9,6 +9,7 @@ import logging
 import sys
 import pmCommand
 import getpass
+import inspect
 
 
 class CLI(cmd.Cmd):
@@ -36,6 +37,7 @@ class CLI(cmd.Cmd):
             logging.error(e)
 
     def do_login(self, args):
+        """Provide password to get a new session at the appliance."""
         password = getpass.getpass("Enter password for {}: ".format(self._username))
         self._pmCommand.login(self._baseurl, self._username, password)
         logging.debug("Session idle timeout: {}".format(
@@ -43,16 +45,20 @@ class CLI(cmd.Cmd):
         logging.info("{} - {}".format(self._pmCommand.product, self._pmCommand.welcome))
 
     def do_logout(self, args):
+        """Logout from the appliance."""
         self._pmCommand.logout()
 
     def do_sort(self, args):
+        """Toggle sorted output for pdu and outlet list"""
         self._sort = not self._sort
         logging.info("Sorted output is now {}.".format("on" if self._sort else "off"))
 
     def do_listipdus(self, args):
+        """Lists the IPDUs connected to the appliance."""
         pmCommand.util.print_table(self._pmCommand.listipdus(), self._sort)
 
     def do_status(self, args):
+        """Displays status of outlets defined in <outlet list>"""
         if args == "" or args == "all":
             outlets = self._pmCommand.status()
         else:
@@ -86,24 +92,31 @@ class CLI(cmd.Cmd):
         return pdu_outlet_tuples
 
     def do_on(self, args):
+        """Turns on outlets defined in <outlet list>."""
         self.outlet_action("on", args)
 
     def do_off(self, args):
+        """Turns off outlets defined in <outlet list>."""
         self.outlet_action("off", args)
 
     def do_lock(self, args):
+        """Locks outlets defined in <outlet list> in current state."""
         self.outlet_action("lock", args)
 
     def do_unlock(self, args):
+        """Unlocks outlets define in <outlet list>."""
         self.outlet_action("unlock", args)
 
     def do_cycle(self, args):
+        """Power cycles outlets defined in <outlet list>."""
         self.outlet_action("cycle", args)
 
     def do_save(self, args):
+        """Saves configuration to flash."""
         self._pmCommand.save()
 
     def do_exit(self, args):
+        """Exits from the application."""
         self.do_logout(None)
         return -1
 
@@ -122,23 +135,14 @@ class CLI(cmd.Cmd):
         pass
 
     def do_help(self, args):
+        """Displays the list of commands."""
         print("""pmCommand strikes back!
 
-Available commands:
- login              Provide password to get a new session at the appliance.
- logout             Logout from the appliance.
- sort               Toggle sorted output for pdu and outlet list
- exit               Exits from the application.
- help               Displays the list of commands.
- listipdus          Lists the IPDUs connected to the appliance.
- on                 Turns on outlets defined in <outlet list>.
- off                Turns off outlets defined in <outlet list>.
- cycle              Power cycles outlets defined in <outlet list>.
- lock               Locks outlets defined in <outlet list> in current state.
- unlock             Unlocks outlets define in <outlet list>.
- status             Displays status of outlets defined in <outlet list>.
- save               Saves configuration to flash.
-""")
+Available commands:""")
+
+        for name, func_obj in sorted(inspect.getmembers(self)):
+            if name.startswith('do_') and func_obj.__doc__:
+                print("  %-20s%s" % (name[3:], func_obj.__doc__))
 
         print("Hint: use tab autocompletion for commands!")
 
