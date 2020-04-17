@@ -1,2 +1,14 @@
+pmCommand.py v2, Apr 17 2020
+  * Switch from Python 2 to Python 3
+  * Add possibility to use http instead of https. The change in command line
+    argument processing is backwards incompatible. Options are -u / --user to
+    specify the user name, and then the http or https base url, like
+    http://10.1.3.37
+  * Make it possible to directly log in to an Avocent PM (v1 only supported
+    reaching PDUs via a Cyclades console server).
+  * Major and minor code cleanups and usability improvements.
+  * Special thanks to Andreas Thienemann (ixs) for contributions, ideas and
+    testing.
+
 pmCommand.py v1, Apr 9 2020
   * Initial release
