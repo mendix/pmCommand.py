@@ -38,11 +38,13 @@ class CLI(cmd.Cmd):
 
     def do_login(self, args):
         """Provide password to get a new session at the appliance."""
-        password = getpass.getpass("Enter password for {}: ".format(self._username))
+        password = getpass.getpass(
+            "Enter password for {}: ".format(self._username))
         self._pmCommand.login(self._baseurl, self._username, password)
         logging.debug("Session idle timeout: {}".format(
             self._pmCommand.get_session_idle_timeout()))
-        logging.info("{} - {}".format(self._pmCommand.product, self._pmCommand.welcome))
+        logging.info("{} - {}".format(self._pmCommand.product,
+                                      self._pmCommand.welcome))
 
     def do_logout(self, args):
         """Logout from the appliance."""
@@ -51,7 +53,8 @@ class CLI(cmd.Cmd):
     def do_sort(self, args):
         """Toggle sorted output for pdu and outlet list"""
         self._sort = not self._sort
-        logging.info("Sorted output is now {}.".format("on" if self._sort else "off"))
+        logging.info("Sorted output is now {}.".format(
+            "on" if self._sort else "off"))
 
     def do_listipdus(self, args):
         """Lists the IPDUs connected to the appliance."""
@@ -86,7 +89,8 @@ class CLI(cmd.Cmd):
         if args != '':
             pdu_outlets = [x.strip() for x in args.split(',')]
             for pdu_outlet in pdu_outlets:
-                pdu_outlet_tuples.append(pmCommand.util.parse_outlet(pdu_outlet))
+                pdu_outlet_tuples.append(
+                    pmCommand.util.parse_outlet(pdu_outlet))
         else:
             logging.error("No outlet specified.")
         return pdu_outlet_tuples
@@ -136,15 +140,27 @@ class CLI(cmd.Cmd):
 
     def do_help(self, args):
         """Displays the list of commands."""
+
+        pref_order = ['status', 'listipdus', 'on', 'off', 'cycle', 'lock',
+                      'unlock', 'save', 'exit', 'help', 'login', 'logout']
+
         print("""pmCommand strikes back!
 
 Available commands:""")
 
-        for name, func_obj in sorted(inspect.getmembers(self)):
-            if name.startswith('do_') and func_obj.__doc__:
-                print("  %-20s%s" % (name[3:], func_obj.__doc__))
+        # Print functions for which we have a preferred order defined
+        for name in pref_order:
+            print("  {:20}{}".format(name, getattr(
+                self, 'do_{}'.format(name)).__doc__.split('\n')[0]))
 
-        print("Hint: use tab autocompletion for commands!")
+        # Find remaining other functions and list them
+        for name, func_obj in inspect.getmembers(self):
+            if name.startswith('do_') and name[3:] not in pref_order and func_obj.__doc__:
+                print("  {:20}{}".format(
+                    name[3:], func_obj.__doc__.split('\n')[0]))
+
+        print("""
+Hint: use tab autocompletion for commands!""")
 
 
 def start_logging(verbose, quiet):
