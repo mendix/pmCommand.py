@@ -148,16 +148,19 @@ class CLI(cmd.Cmd):
 
 Available commands:""")
 
-        # Print functions for which we have a preferred order defined
-        for name in pref_order:
-            print("  {:20}{}".format(name, getattr(
-                self, 'do_{}'.format(name)).__doc__.split('\n')[0]))
+        helptext_by_func = {
+            name[3:]: "  {:20}{}".format(name[3:], func_obj.__doc__.split('\n')[0])
+            for name, func_obj in inspect.getmembers(self)
+            if name.startswith('do_') and func_obj.__doc__
+        }
 
-        # Find remaining other functions and list them
-        for name, func_obj in inspect.getmembers(self):
-            if name.startswith('do_') and name[3:] not in pref_order and func_obj.__doc__:
-                print("  {:20}{}".format(
-                    name[3:], func_obj.__doc__.split('\n')[0]))
+        # Print functions for which we have a preferred order defined
+        for pref in pref_order:
+            print(helptext_by_func.pop(pref))
+
+        # Print everything else that is left
+        for text in helptext_by_func.values():
+            print(text)
 
         print("""
 Hint: use tab autocompletion for commands!""")
