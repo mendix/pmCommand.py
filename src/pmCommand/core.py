@@ -66,8 +66,8 @@ class PMCommand():
 
     def save(self):
         for pdu in self.client.listipdus():
-            logging.info("Saving configuration on PDU {}.".format(pdu.text['name']))
-            self.client.save(pdu.text['name'])
+            logging.info("Saving configuration on PDU {}.".format(pdu.pduId_Index))
+            self.client.save(pdu.pduId_Index)
 
     def get_session_idle_timeout(self):
         return self.client.get_session_idle_timeout()
